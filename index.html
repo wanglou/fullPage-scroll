@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      /* 任何触摸事件都不会产生默认行为，但是 touch 事件照样触发 */
+      touch-action: none;
+    }
+    .container div {
+      text-align: center;
+    }
+    .container div span {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      text-align: center;
+      border-radius: 50%;
+      line-height: 20px;
+    }
+    .fixed-div {
+      position: fixed;
+      left: 20px;
+      top: 40%;
+    }
+    .fixed-div p {
+      display: block;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      text-align: center;
+      border-radius: 50%;
+      line-height: 20px;
+      cursor: pointer;
+    }
+    .fixed-div p.active {
+      color: #fff;
+      background: red;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="container">
+      <div style="background: #ddd;"> <span> 1 </span> </div>
+      <div style="background: #745555;"> <span> 2 </span> </div>
+      <div style="background: #7CCB7C;"> <span> 3 </span> </div>
+    </div>
+
+    <div class="fixed-div">
+      <p class="active">1</p>
+      <p>2</p>
+      <p>3</p>
+    </div>
+  </div>
+  <script src="http://lib.sinaapp.com/js/jquery/3.1.0/jquery-3.1.0.min.js"></script>
+  <!-- 引入jquery.mousewheel.js -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"></script>
+  <script>
+    // 页面滚动事件
+    function scrollFn (globalNum) {
+      // 移除导航按钮所以class
+      $(".fixed-div p").removeClass("active")
+      // 给当前页面添加class
+      $('.fixed-div').children('p').eq(globalNum).addClass("active")
+      window.scrollTo({ 
+        top: $(window).height() * globalNum,
+        behavior: "smooth"
+      })
+    }
+    $(document).ready(function(){
+      // 获取浏览器高度，给页面高赋值
+      $('.container div').height($(window).height())
+      // $('.container').height($(window).height())
+      var globalNum = 0
+      //开始监听滚动
+      $('#app').on('mousewheel', function(event) {
+        event.preventDefault()
+        globalNum = Number(event.target.innerText) - 1
+        var downOrup = event.deltaY
+        if (downOrup > 0) {
+          // 向上
+          if (globalNum===0) return
+          globalNum--
+        } else {
+          // 向下
+          if (globalNum=== 2) return
+          globalNum++
+        }
+        scrollFn(globalNum)
+      });
+      // 点击导航事件
+      $(".fixed-div p").click((event) => {
+        globalNum = Number(event.target.innerText) - 1
+        scrollFn(globalNum)
+      })
+      // 屏幕缩放事件
+      window.onresize = function(){
+        $('.container div').height($(window).height())
+        window.scrollTo({ 
+          top: $(window).height() * globalNum
+        })
+      }
+
+
+
+      ///////////////////////// 移动端事件
+      var starty;
+      function getDirection(starty, endy) {
+        var angy = endy - starty;
+        var result = 0;
+        if (angy > 0) {
+          result = 1;
+        } else {
+          result = 2;
+        }
+        return result;
+      }
+      //手指接触屏幕
+      document.addEventListener("touchstart", function(e){
+        startx = e.touches[0].pageX;
+        starty = e.touches[0].pageY;
+      }, false);
+      //手指离开屏幕
+      document.addEventListener("touchend", function(e) {
+          var endy;
+          endy = e.changedTouches[0].pageY;
+          var direction = getDirection(starty, endy);
+          switch (direction) {
+            case 1:
+              // 上
+              if (globalNum===0) return
+              globalNum--
+              break;
+            case 2:
+              // 下
+              if (globalNum=== 2) return
+              globalNum++
+              break;
+            default:
+          }
+          scrollFn(globalNum)
+      }, false);
+    }) 
+  </script>
+</body>
+</html>
