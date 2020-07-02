@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      margin: 0;
+    }
+    #app {
+      height: 100vh;
+      overflow: hidden;
+    }
+    #app>div {
+      height: 100%;
+    }
+    .aside {
+      width: 200px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #ddd;
+      transform: translateX(-200px);
+      transition: all .3s ease;
+    }
+    .container {
+      width: 100vw;
+      display: flex;
+      transition: all .3s ease;
+    }
+    #app.active .aside {
+      transform: translateX(0px);
+    }
+    #app.active .container {
+      transform: translateX(200px);
+    }
+    .left {
+      flex: 1;
+      background: #98CEB4;
+    }
+    .right {
+      width: 300px;
+      background: #AF8B6F;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" :class="{active: asideShow}">
+    <div class="aside"> aside </div>
+    <div class="container">
+      <div class="left"> left <button @click="asideShow = !asideShow"> toggle </button> </div>
+      <div class="right"> right </div>
+    </div>
+  </div>
+  <script crossorigin="anonymous" integrity="sha384-OZmxTjkv7EQo5XDMPAmIkkvywVeXw59YyYh6zq8UKfkbor13jS+5p8qMTBSA1q+F" src="https://lib.baomitu.com/vue/2.6.11/vue.min.js"></script>
+  <script>
+    var vm = new Vue({
+      el:"#app",
+      data () {
+        return {
+          asideShow: false
+        }
+      },
+      methods: {
+      }
+    })
+  </script>
+</body>
+</html>
